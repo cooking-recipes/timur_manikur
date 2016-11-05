@@ -56,6 +56,57 @@
 	</div>
 </footer>
 
+                
+	<script>
+
+    //$("#input-telephone").inputmask("7(999)999-99-99");
+
+    $(document).ready(function () {
+
+        $('#button-oneclick').on('click', function () {
+            $('.alert, .text-danger').remove();
+
+            var tel_number = $("#input-telephone").val();
+            var product_id = $('input[name="product_id"]').val();
+
+            var pattern = /^\+[1-9]{1}[0-9]{3,14}$/;
+
+            if (pattern.test($("#input-telephone").val())) {
+                $.ajax({
+                    url: 'index.php?route=product/buyoneclick/oneclickadd',
+                    type: 'post',
+                    data: 'product_id=' + product_id + '&tel_number=' + tel_number,
+                    dataType: 'json',
+                    complete: function () {
+                        $('#cart > button').button('reset');
+                    },
+                    success: function (json) {
+                        if (json['redirect']) {
+                            location = json['redirect'];
+                        }
+
+                        if (json['success']) {
+                           $('.form-one-click-call').html('<label class="control-label" for="input-telephone">' + json['text_order_success'] + ' ' + json['code'] + '</label>');
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        //console.log(xhr.status);
+                        //console.log(thrownError);
+                        $('#content').parent().before('<div class="alert alert-danger"><i class="fa fa-minus-circle"></i>'+ xhr.responseText +' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+                });
+            }
+            else {
+                $('#content').parent().before('<div class="alert alert-danger"><i class="fa fa-minus-circle"></i> Телефонный номер неверен. Он должен состаять из цифр.<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+        });
+
+    });
+
+</script>
+
+            
+
 	<script>
 
     //$("#input-telephone").inputmask("7(999)999-99-99");

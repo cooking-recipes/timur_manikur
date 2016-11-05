@@ -325,33 +325,4 @@ class ControllerCommonHeader extends Controller {
 		}
 		return $result;
 	}
-	
-	protected function getAlterLanguageLinks2($links) {
-		$result = array();
-		if ($this->config->get('config_seo_url')) {
-			foreach($links as $link) {
-				if($link['rel']=='canonical') {
-					$url=$link['href'];
-					$schema = parse_url($url,PHP_URL_SCHEME);
-					$server = strtolower($schema)=='https' ? HTTPS_SERVER : HTTP_SERVER; 
-					$cur_lang = substr($url, strlen($server),2);
-					$query = substr($url, strlen($server)+2);
-					$this->load->model('localisation/language');
-					$languages = $this->model_localisation_language->getLanguages();
-					$active_langs = array();
-					foreach($languages as $lang) {
-						if($lang['status']) {
-							$active_langs[]=$lang['code'];
-						} 
-					}
-					if(in_array($cur_lang, $active_langs)) {
-						foreach($active_langs as $lang) {
-							$result[$lang] = $server.$lang.($query ? $query : '');
-						}
-					}
-				}
-			}
-		}
-		return $result;
-	}
 }

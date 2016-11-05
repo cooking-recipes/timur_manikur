@@ -11,6 +11,8 @@
 <title><?php echo $title; ?></title>
 <base href="<?php echo $base; ?>" />
 <?php if ($canonical_link) {echo '<link href="'.$canonical_link.'" rel="canonical" />';} ?>
+<?php if (isset($alternate)) {echo $alternate;} ?>
+			
 	<?php
 	if(!$description) $description = $title;
 	?>

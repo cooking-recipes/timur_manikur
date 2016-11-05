@@ -2,37 +2,6 @@
 class ControllerProductProduct extends Controller {
 	private $error = array();
 
-
-			private function parseText($node, $keyword, $dom, $link, $target='', $tooltip = 0)
-			{
-				if (mb_strpos($node->nodeValue, $keyword) !== false)
-					{
-						$keywordOffset = mb_strpos($node->nodeValue, $keyword, 0, 'UTF-8');
-						$newNode = $node->splitText($keywordOffset);
-						$newNode->deleteData(0, mb_strlen($keyword, 'UTF-8'));
-						$span = $dom->createElement('a', $keyword);
-						if ($tooltip)
-							{
-								$span->setAttribute('href', '#');
-								$span->setAttribute('style', 'text-decoration:none');
-								$span->setAttribute('class', 'title');
-								$span->setAttribute('title', $keyword.'|'.$link);
-							}
-							else
-							{
-								$span->setAttribute('href', $link);
-								$span->setAttribute('target', $target);
-								$span->setAttribute('style', 'text-decoration:none');
-							}							
-						
-						$node->parentNode->insertBefore($span, $newNode);
-						$this->parseText($newNode ,$keyword, $dom, $link, $target, $tooltip);
-					}					
-			}
-			
-			
-
-			
 	public function index() {
 		$this->load->language('product/product');
 
@@ -245,8 +214,7 @@ class ControllerProductProduct extends Controller {
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
 			);
 
-$extendedseo = $this->config->get('extendedseo');
-			$this->document->setTitle(((isset($category_info['name']) && isset($extendedseo['categoryintitle']) )?($category_info['name'].' : '):'').($product_info['meta_title']?$product_info['meta_title']:$product_info['name']));
+			$this->document->setTitle($product_info['meta_title']);
 			$this->document->setDescription($product_info['meta_description']);
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
@@ -256,10 +224,8 @@ $extendedseo = $this->config->get('extendedseo');
 			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 			$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
 
-			$data['heading_title'] = ($product_info['custom_h1'] <> '')?$product_info['custom_h1']:$product_info['name'];
+			$data['heading_title'] = $product_info['name'];
 
-$data['custom_alt'] = $product_info['custom_alt'];
-$data['custom_imgtitle'] = $product_info['custom_imgtitle'];
 			$data['text_select'] = $this->language->get('text_select');
 			$data['text_manufacturer'] = $this->language->get('text_manufacturer');
 			$data['text_model'] = $this->language->get('text_model');
@@ -303,62 +269,6 @@ $data['custom_imgtitle'] = $product_info['custom_imgtitle'];
 			$data['model'] = $product_info['model'];
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
-
-			
-				$data['mbreadcrumbs'] = array();
-
-				$data['mbreadcrumbs'][] = array(
-					'text'      => $this->language->get('text_home'),
-					'href'      => $this->url->link('common/home')
-				);
-				
-				if ($this->model_catalog_product->getFullPath($this->request->get['product_id'])) {
-					
-					$path = '';
-			
-					$parts = explode('_', (string)$this->model_catalog_product->getFullPath($this->request->get['product_id']));
-					
-					$category_id = (int)array_pop($parts);
-											
-					foreach ($parts as $path_id) {
-						if (!$path) {
-							$path = $path_id;
-						} else {
-							$path .= '_' . $path_id;
-						}
-						
-						$category_info = $this->model_catalog_category->getCategory($path_id);
-						
-						if ($category_info) {
-							$data['mbreadcrumbs'][] = array(
-								'text'      => $category_info['name'],
-								'href'      => $this->url->link('product/category', 'path=' . $path)								
-							);
-						}
-					}
-					
-					$category_info = $this->model_catalog_category->getCategory($category_id);
-					
-					if ($category_info) {			
-						$url = '';
-											
-						$data['mbreadcrumbs'][] = array(
-							'text'      => $category_info['name'],
-							'href'      => $this->url->link('product/category', 'path=' . $this->model_catalog_product->getFullPath($this->request->get['product_id']))						
-						);
-					}
-			
-				
-				} else {
-				$data['mbreadcrumb'] = false;
-				}
-				
-				$data['review_no'] = $product_info['reviews'];		
-				$data['quantity'] = $product_info['quantity'];						
-				$data['currency_code'] = $this->currency->getCode();
-				$data['richsnippets'] = $this->config->get('richsnippets');				
-			
-			
 
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
@@ -479,48 +389,7 @@ $data['custom_imgtitle'] = $product_info['custom_imgtitle'];
 
 			$data['reviews'] = sprintf($this->language->get('text_reviews'), (int)$product_info['reviews']);
 			$data['rating'] = (int)$product_info['rating'];
-			
-			$extendedseo = $this->config->get('extendedseo');
-			$data['description'] = ((isset($extendedseo['productseo']))?'<h2>'.$product_info['name'].'</h2>':'').html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
-			
-$data['description'] = ($product_info['custom_h2'] != '')?'<h2>'.$product_info['custom_h2'].'</h2>'.$data['description']:$data['description'];
-
-				$autolinks = $this->config->get('autolinks'); 
-				
-				if (isset($autolinks) && (strpos($data['description'], 'iframe') == false) && (strpos($data['description'], 'object') == false)){
-				$xdescription = mb_convert_encoding(html_entity_decode($data['description'], ENT_COMPAT, "UTF-8"), 'HTML-ENTITIES', "UTF-8"); 
-				
-				libxml_use_internal_errors(true);
-				$dom = new DOMDocument; 			
-				$dom->loadHTML('<div>'.$xdescription.'</div>');				
-				libxml_use_internal_errors(false);
-
-				
-				$xpath = new DOMXPath($dom);
-								
-				foreach ($autolinks as $autolink)
-				{	
-					$keyword = $autolink['keyword'];
-					$xlink = mb_convert_encoding(html_entity_decode($autolink['link'], ENT_COMPAT, "UTF-8"), 'HTML-ENTITIES', "UTF-8");
-					$target = $autolink['target'];
-					$tooltip = isset($autolink['tooltip']);
-													
-					$pTexts = $xpath->query(
-						sprintf('///text()[contains(., "%s")]', $keyword)
-					);
-					
-					foreach ($pTexts as $pText) {
-						$this->parseText($pText, $keyword, $dom, $xlink, $target, $tooltip);
-					}
-
-									
-				}
-						
-				$data['description'] = $dom->saveXML($dom->documentElement);
-				
-				}
-				
-			
+			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
 			$data['attribute_groups'] = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
 
 			$data['products'] = array();
@@ -588,6 +457,9 @@ $data['description'] = ($product_info['custom_h2'] != '')?'<h2>'.$product_info['
 			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
 
 			$this->model_catalog_product->updateViewed($this->request->get['product_id']);
+
+                $data['buyoneclick'] = $this->load->controller('product/buyoneclick', ['price'=>$data['price'],'product_name'=>$data['heading_title'], 'product_id'=>$data['product_id']]); // BuyOneClick button
+		
 
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
@@ -657,8 +529,7 @@ $data['description'] = ($product_info['custom_h2'] != '')?'<h2>'.$product_info['
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $product_id)
 			);
 
-$extendedseo = $this->config->get('extendedseo');
-			$this->document->setTitle(((isset($category_info['name']) && isset($extendedseo['categoryintitle']) )?($category_info['name'].' : '):'').$this->language->get('text_error'));
+			$this->document->setTitle($this->language->get('text_error'));
 
 			$data['heading_title'] = $this->language->get('text_error');
 
@@ -720,11 +591,6 @@ $extendedseo = $this->config->get('extendedseo');
 		$pagination->url = $this->url->link('product/product/review', 'product_id=' . $this->request->get['product_id'] . '&page={page}');
 
 		$data['pagination'] = $pagination->render();
-			
-				foreach ($pagination->prevnext() as $pagelink) {
-					$this->document->addLink($pagelink['href'], $pagelink['rel']);
-				}
-				
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($review_total) ? (($page - 1) * 5) + 1 : 0, ((($page - 1) * 5) > ($review_total - 5)) ? $review_total : ((($page - 1) * 5) + 5), $review_total, ceil($review_total / 5));
 

@@ -167,8 +167,8 @@ class ControllerProductCategory extends Controller {
 				);
 			}
 
+
 			$data['products'] = array();
-			$data['name'] = $category_info['name'];
 
 			$filter_data = array(
 				'filter_category_id' => $category_id,
@@ -355,7 +355,7 @@ class ControllerProductCategory extends Controller {
 				
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
-
+			$data['name'] = "asd";
 			$data['sort'] = $sort;
 			$data['order'] = $order;
 			$data['limit'] = $limit;
