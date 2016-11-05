@@ -235,3 +235,9 @@ catalog\language\english\module\filter.php
 catalog\language\russian\module\filter.php
 catalog\view\theme\theme509\template\module\filter.tpl
 catalog\view\theme\theme509\template\product\category.tpl
+catalog\controller\product\buyoneclick.php
+catalog\language\english\product\buyoneclick.php
+catalog\language\russian\product\buyoneclick.php
+catalog\view\theme\theme509\template\product\buyoneclick.tpl
+catalog\controller\tool\captcha.php
+catalog\view\theme\theme509\template\product\review.tpl

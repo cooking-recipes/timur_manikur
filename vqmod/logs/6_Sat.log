@@ -312,3 +312,17 @@ VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): $this->response->redire
 ----------------------------------------------------------------------
 
 
+---------- Date: 2016-11-05 05:16:34 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /manikyurnie-nabori/manikyurnii-nabor-zmeika-nm-01.html
+MOD DETAILS:
+   modFile   : W:\vhosts\localhost2\vqmod/xml/install.xml
+   id        : 
+   version   : 1.0.1
+   vqmver    : 
+   author    : Harutyun Margaryan
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <button type="button" id="button-cart" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary btn-lg btn-block"><?php echo $button_cart; ?></button>
+----------------------------------------------------------------------
+
+
